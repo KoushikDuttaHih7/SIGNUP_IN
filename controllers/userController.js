@@ -28,7 +28,7 @@ const register = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    res.status(201).json({ user, message: "User Signed In" });
+    res.status(201).json({ message: "User Signed In", user });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
@@ -42,7 +42,7 @@ const logIn = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    res.json({ user, message: "User Logged In" });
+    res.json({ message: "User Logged In", user });
   } else {
     res.status(400);
     throw new Error("Invalid Credentials");
@@ -63,8 +63,16 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Deleted User", id: req.params.id });
 });
 
+// Get All User
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find(req.body);
+
+  res.status(200).json(users);
+});
+
 module.exports = {
   register,
   logIn,
   deleteUser,
+  getUsers,
 };
